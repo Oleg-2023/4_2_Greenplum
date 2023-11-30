@@ -44,16 +44,13 @@ WHERE f.sale_date BETWEEN to_date('20220901', 'YYYYMMDD')  AND  to_date('2022093
 GROUP BY f.good_id, g.good_name, f.sale_date, g.price  
 ORDER BY total_sum DESC;  
 
-рассчитывает сумму продаж определенного товара за определенную единицу времени.
-Execute time (ms)	100
+### 6. Статистика и план запроса  
 
-Fetch time (ms)	0
-
-Total time (ms)	100
-
-Start time	                2023-11-29 17:51:25.422
-
-Finish time	2023-11-29 17:51:25.711
+Execute time (ms)	100  
+Fetch time (ms)	0  
+Total time (ms)	100  
+Start time	2023-11-29 17:51:25.422  
+Finish time	2023-11-29 17:51:25.711  
 
 |QUERY PLAN                                                                                                                                                          |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
