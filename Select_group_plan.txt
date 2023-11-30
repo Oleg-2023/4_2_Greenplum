@@ -1,0 +1,44 @@
+Queries	
+statistic
+---------------------------
+Updated Rows	0
+
+Execute time (ms)	84
+
+Fetch time (ms)	0
+
+Total time (ms)	84
+
+Start time	                2023-11-29 18:24:10.546
+
+Finish time	2023-11-29 18:24:10.811
+
+|QUERY PLAN                                                                                                                                                          |                                                    
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Gather Motion 4:1  (slice3; segments: 4)  (cost=0.00..862.00 rows=1 width=40)                                                                                             |
+|  Merge Key: (((pg_catalog.sum((sum(fact_sales.amount)))) * goods.price))                                                                                                 |
+|  ->  Sort  (cost=0.00..862.00 rows=1 width=40)                                                                                                                           |
+|        Sort Key: (((pg_catalog.sum((sum(fact_sales.amount)))) * goods.price))                                                                                            |
+|        ->  Result  (cost=0.00..862.00 rows=1 width=40)                                                                                                                   |
+|              ->  GroupAggregate  (cost=0.00..862.00 rows=1 width=36)                                                                                                     |
+|                    Group Key: fact_sales.good_id, goods.good_name, fact_sales.sale_date, goods.price                                                                     |
+|                    ->  Sort  (cost=0.00..862.00 rows=1 width=36)                                                                                                         |
+|                          Sort Key: fact_sales.good_id, goods.good_name, fact_sales.sale_date, goods.price                                                                |
+|                          ->  Redistribute Motion 4:4  (slice2; segments: 4)  (cost=0.00..862.00 rows=1 width=36)                                                         |
+|                                Hash Key: fact_sales.good_id, goods.good_name, fact_sales.sale_date, goods.price                                                          |
+|                                ->  Result  (cost=0.00..862.00 rows=1 width=36)                                                                                           |
+|                                      ->  GroupAggregate  (cost=0.00..862.00 rows=1 width=36)                                                                             |
+|                                            Group Key: fact_sales.good_id, goods.good_name, fact_sales.sale_date, goods.price                                             |
+|                                            ->  Sort  (cost=0.00..862.00 rows=1 width=95)                                                                                 |
+|                                                  Sort Key: fact_sales.good_id, goods.good_name, fact_sales.sale_date, goods.price                                        |
+|                                                  ->  Hash Join  (cost=0.00..862.00 rows=1 width=95)                                                                      |
+|                                                        Hash Cond: (goods.good_id = fact_sales.good_id)                                                                   |
+|                                                        ->  Seq Scan on goods  (cost=0.00..431.00 rows=1 width=83)                                                        |
+|                                                        ->  Hash  (cost=431.00..431.00 rows=1 width=20)                                                                   |
+|                                                              ->  Broadcast Motion 4:4  (slice1; segments: 4)  (cost=0.00..431.00 rows=1 width=20)                        |
+|                                                                    ->  Sequence  (cost=0.00..431.00 rows=1 width=20)                                                     |
+|                                                                          ->  Partition Selector for fact_sales (dynamic scan id: 1)  (cost=10.00..100.00 rows=25 width=4)|
+|                                                                                Partitions selected: 1 (out of 1)                                                         |
+|                                                                          ->  Dynamic Seq Scan on fact_sales (dynamic scan id: 1)  (cost=0.00..431.00 rows=1 width=20)    |
+|                                                                                Filter: ((sale_date >= '2022-09-01'::date) AND (sale_date <= '2022-09-30'::date))         |
+|Optimizer: Pivotal Optimizer (GPORCA)                                                                                                                                     |
